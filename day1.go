@@ -31,15 +31,36 @@ func (s *Stack) Pop() (int, bool) {
 	}
 }
 
+// remove element from slice
+func remove(slice []int, s int) []int {
+	var p int
+	// find index of element
+	for i := 0; i < len(slice); i++ {
+		if slice[i] == s {
+			// Remove the element at index i from a.
+			slice[i] = slice[len(slice)-1] // Copy last element to index i.
+			slice[len(slice)-1] = 0        // Erase last element (write zero value).
+			slice = slice[:len(slice)-1]   // Truncate slice.
+			p = i
+			break
+		}
+	}
+	// return slice without element
+	return slice[:p+copy(slice[p:], slice[p+1:])]
+}
+
 func day1() {
 	var stack Stack
 	var maxValue int
+	var top3 []int
+	var sumTop3 int
 	// load file from disk
 	data, err := ioutil.ReadFile("day1input.txt")
 	if err != nil {
 		panic(err)
 	}
 	var sum int
+	sumList := make([]int, 0)
 	sum = 0
 	// read data line by line
 	lines := strings.Split(string(data), "\n")
@@ -52,6 +73,7 @@ func day1() {
 				x, y := stack.Pop()
 				if y {
 					sum += x
+					sumList = append(sumList, sum)
 				}
 			}
 			if condition := sum > maxValue; condition {
@@ -67,5 +89,24 @@ func day1() {
 		}
 		stack = append(stack, num)
 	}
-	fmt.Println(maxValue)
+	//get top3 elements from sumList
+	for i := 0; i < 3; i++ {
+		max := 0
+		for _, v := range sumList {
+			if v > max {
+				max = v
+			}
+		}
+		top3 = append(top3, max)
+		sumList = remove(sumList, max)
+	}
+
+	fmt.Println("Top 3 sum values are: ", top3)
+	//summarize all values in top3
+	for _, v := range top3 {
+		sumTop3 += v
+	}
+
+	fmt.Println("maxiumum calories: ", maxValue)
+	fmt.Println("top three most calories sum: ", sumTop3)
 }
