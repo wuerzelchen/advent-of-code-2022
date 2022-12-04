@@ -6,6 +6,35 @@ import (
 	"strings"
 )
 
+// a && y = x
+// b && x = x
+// c && z = x
+// a && z = y
+// b && y = y
+func getOutcome(opponent_move string, my_move string) string {
+	if opponent_move == "a" && my_move == "y" {
+		return "x"
+	} else if opponent_move == "b" && my_move == "x" {
+		return "x"
+	} else if opponent_move == "c" && my_move == "z" {
+		return "x"
+	} else if opponent_move == "a" && my_move == "z" {
+		return "y"
+	} else if opponent_move == "b" && my_move == "y" {
+		return "y"
+	} else if opponent_move == "c" && my_move == "x" {
+		return "y"
+	} else if opponent_move == "a" && my_move == "x" {
+		return "z"
+	} else if opponent_move == "b" && my_move == "z" {
+		return "z"
+	} else if opponent_move == "c" && my_move == "y" {
+		return "z"
+	} else {
+		return "error"
+	}
+}
+
 // a = rock
 // b = paper
 // c = scissors
@@ -61,13 +90,14 @@ func day2() {
 		my_move := strings.Split(line, " ")[1]
 		opponent_move = strings.ToLower(opponent_move)
 		my_move = strings.ToLower(my_move)
-		if checkWinCondition(opponent_move, my_move) {
+		if checkWinCondition(opponent_move, getOutcome(opponent_move, my_move)) {
 			score += 6
-		} else if checkDrawCondition(opponent_move, my_move) {
+		} else if checkDrawCondition(opponent_move, getOutcome(opponent_move, my_move)) {
 			score += 3
 		} else {
 			score += 0
 		}
+		my_move = getOutcome(opponent_move, my_move)
 		if my_move == "x" {
 			score += 1
 		} else if my_move == "y" {
@@ -75,7 +105,6 @@ func day2() {
 		} else if my_move == "z" {
 			score += 3
 		}
-		//fmt.Println("opponent move: ", opponent_move, " my move: ", my_move, " score: ", score)
 	}
 	fmt.Println("total score: ", score)
 
